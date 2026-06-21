@@ -1,8 +1,7 @@
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
-import {
-  DELIVERY_BIKE_KG, equivalentPhrase, impactBand,
-} from '../lib/footprint';
+import { equivalentPhrase, impactBand } from '../lib/footprint';
+import { DELIVERY_BY_ID } from '../data/delivery';
 import { useApp } from '../state/AppContext';
 
 export default function SuccessScreen() {
@@ -26,15 +25,16 @@ export default function SuccessScreen() {
   }
 
   const band = impactBand(lastOrder.total);
+  const vehicle = DELIVERY_BY_ID[lastOrder.deliveryVehicleId];
 
   return (
     <>
       <Header title="Order placed" />
       <main className="screen-body">
         <div className="success-hero">
-          <div className="ring">🛵</div>
+          <div className="ring">{vehicle.emoji}</div>
           <h1>Order placed!</h1>
-          <p>Estimated arrival · 25 min</p>
+          <p>Estimated arrival · {vehicle.etaMin} min</p>
         </div>
 
         <div className="totals">
@@ -70,7 +70,7 @@ export default function SuccessScreen() {
               {band.leaf} {band.label} impact · {lastOrder.total.toFixed(2)} kg CO₂e
             </div>
             {equivalentPhrase(lastOrder.total)} · (includes{' '}
-            {DELIVERY_BIKE_KG.toFixed(2)} kg for bike delivery)
+            {lastOrder.delivery.toFixed(2)} kg for {vehicle.label.toLowerCase()} delivery)
           </div>
         )}
 

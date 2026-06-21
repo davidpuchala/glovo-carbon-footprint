@@ -2,14 +2,16 @@ import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
 import EcoBadge from '../components/EcoBadge';
 import {
-  bestSwap, DELIVERY_BIKE_KG, getItem, impactBand, itemCo2e, orderBreakdown,
+  bestSwap, getItem, impactBand, itemCo2e, orderBreakdown,
 } from '../lib/footprint';
+import { DELIVERY_VEHICLES, DELIVERY_BY_ID } from '../data/delivery';
 import { useApp } from '../state/AppContext';
 
 export default function CartScreen() {
   const {
     cart, cartCount, cartItemIds, addToCart, removeFromCart,
-    awarenessMode, goTo, setLastOrder, setRevealCarbon,
+    awarenessMode, deliveryVehicleId, setDeliveryVehicle, pushToast,
+    goTo, setLastOrder, setRevealCarbon,
   } = useApp();
 
   if (cartCount === 0) {
@@ -28,9 +30,17 @@ export default function CartScreen() {
     );
   }
 
-  const breakdown = orderBreakdown(cartItemIds);
+  const breakdown = orderBreakdown(cartItemIds, deliveryVehicleId);
   const swap = bestSwap(breakdown.items);
   const totalBand = impactBand(breakdown.total);
+  const vehicle = DELIVERY_BY_ID[deliveryVehicleId];
+
+  const pickVehicle = (id: typeof deliveryVehicleId) => {
+    setDeliveryVehicle(id);
+    const v = DELIVERY_BY_ID[id];
+    if (id === 'scooter') return; // fastest option, no eco nudge
+    pushToast(v.emoji, `${v.label} delivery · ${v.tagline.toLowerCase()}`);
+  };
 
   return (
     <>
@@ -73,6 +83,33 @@ export default function CartScreen() {
           </div>
         )}
 
+        <div className="section-title">Delivery method</div>
+        <div className="veh-grid">
+          {DELIVERY_VEHICLES.map((v) => {
+            const band = impactBand(v.co2eKg);
+            const selected = v.id === deliveryVehicleId;
+            return (
+              <button
+                key={v.id}
+                className={`veh-card ${selected ? 'selected' : ''}`}
+                onClick={() => pickVehicle(v.id)}
+                aria-pressed={selected}
+              >
+                <span className="veh-emoji">{v.emoji}</span>
+                <span className="veh-name">{v.label}</span>
+                <span className="veh-eta">{v.etaMin} min</span>
+                <span className={`veh-co2 ${band.cls}`}>
+                  {awarenessMode === 'Detailed'
+                    ? `${band.leaf} ${v.co2eKg.toFixed(2)} kg`
+                    : awarenessMode === 'Light'
+                      ? `${band.leaf} ${band.label}`
+                      : band.leaf}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
         <div className="totals">
           <div className="line">
             <span>Items subtotal</span>
@@ -89,8 +126,8 @@ export default function CartScreen() {
 
           {awarenessMode !== 'Off' && (
             <div className="line muted">
-              <span>🛵 Bike delivery</span>
-              <span>{DELIVERY_BIKE_KG.toFixed(2)} kg CO₂e</span>
+              <span>{vehicle.emoji} {vehicle.label} delivery</span>
+              <span>{breakdown.delivery.toFixed(2)} kg CO₂e</span>
             </div>
           )}
           {awarenessMode === 'Detailed' && (

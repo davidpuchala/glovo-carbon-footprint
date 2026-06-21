@@ -1,10 +1,9 @@
 import type {
-  AwarenessMode, BandResult, ItemCategory, MenuItem,
+  AwarenessMode, BandResult, DeliveryVehicleId, ItemCategory, MenuItem,
   OrderBreakdown, OrderLine, SwapSuggestion,
 } from '../types';
 import { MENU_BY_ID } from '../data/menu';
-
-export const DELIVERY_BIKE_KG = 0.45;
+import { DEFAULT_VEHICLE_ID, DELIVERY_BY_ID } from '../data/delivery';
 
 interface Swap {
   swapTo: string;
@@ -36,7 +35,7 @@ export function itemCo2e(itemId: string): number {
 
 export function orderBreakdown(
   itemIds: string[],
-  includeDelivery = true,
+  vehicleId: DeliveryVehicleId = DEFAULT_VEHICLE_ID,
 ): OrderBreakdown {
   const items: OrderLine[] = [];
   for (const iid of itemIds) {
@@ -52,13 +51,14 @@ export function orderBreakdown(
     });
   }
   const itemsTotal = round2(items.reduce((s, r) => s + r.co2eKg, 0));
-  const delivery = includeDelivery ? DELIVERY_BIKE_KG : 0;
+  const delivery = DELIVERY_BY_ID[vehicleId].co2eKg;
   return {
     items,
     itemsTotal,
     delivery,
-    total:       round2(itemsTotal + delivery),
-    subtotalEur: round2(items.reduce((s, r) => s + r.priceEur, 0)),
+    total:             round2(itemsTotal + delivery),
+    subtotalEur:       round2(items.reduce((s, r) => s + r.priceEur, 0)),
+    deliveryVehicleId: vehicleId,
   };
 }
 

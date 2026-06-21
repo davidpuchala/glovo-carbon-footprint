@@ -37,6 +37,18 @@ export interface OrderBreakdown {
   delivery: number;
   total: number;
   subtotalEur: number;
+  deliveryVehicleId: DeliveryVehicleId;
+}
+
+export type DeliveryVehicleId = 'bicycle' | 'ebike' | 'scooter';
+
+export interface DeliveryVehicle {
+  id: DeliveryVehicleId;
+  label: string;
+  emoji: string;
+  co2eKg: number;     // delivery-leg footprint
+  etaMin: number;     // estimated arrival
+  tagline: string;    // short descriptor, e.g. 'Zero emissions'
 }
 
 export type AwarenessMode = 'Off' | 'Light' | 'Detailed';

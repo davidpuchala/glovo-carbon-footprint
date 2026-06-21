@@ -2,7 +2,10 @@ import {
   createContext, useCallback, useContext, useMemo, useState,
   type ReactNode,
 } from 'react';
-import type { AwarenessMode, OrderBreakdown, Screen } from '../types';
+import type {
+  AwarenessMode, DeliveryVehicleId, OrderBreakdown, Screen,
+} from '../types';
+import { DEFAULT_VEHICLE_ID } from '../data/delivery';
 
 type Cart = Record<string, number>;
 interface Toast { id: number; icon: string; text: string; }
@@ -20,6 +23,9 @@ interface AppState {
 
   awarenessMode: AwarenessMode;
   setAwarenessMode: (m: AwarenessMode) => void;
+
+  deliveryVehicleId: DeliveryVehicleId;
+  setDeliveryVehicle: (id: DeliveryVehicleId) => void;
 
   activeRestaurant: string;
   setActiveRestaurant: (r: string) => void;
@@ -40,6 +46,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [screen, setScreen] = useState<Screen>('home');
   const [cart, setCart] = useState<Cart>({});
   const [awarenessMode, setAwarenessMode] = useState<AwarenessMode>('Light');
+  const [deliveryVehicleId, setDeliveryVehicle] =
+    useState<DeliveryVehicleId>(DEFAULT_VEHICLE_ID);
   const [activeRestaurant, setActiveRestaurant] = useState('Burger Lab');
   const [lastOrder, setLastOrder] = useState<OrderBreakdown | null>(null);
   const [revealCarbon, setRevealCarbon] = useState(false);
@@ -82,6 +90,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     screen, goTo,
     cart, cartCount, cartItemIds, addToCart, removeFromCart, clearCart,
     awarenessMode, setAwarenessMode,
+    deliveryVehicleId, setDeliveryVehicle,
     activeRestaurant, setActiveRestaurant,
     lastOrder, setLastOrder,
     revealCarbon, setRevealCarbon,

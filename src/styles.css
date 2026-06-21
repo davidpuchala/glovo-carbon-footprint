@@ -221,6 +221,46 @@ button:disabled { cursor: default; }
 .eco-med  { background: #FEF3C7; color: #78350F; }
 .eco-high { background: #FEE2E2; color: #7F1D1D; }
 
+/* ── Delivery vehicle selector ──────────────────────────────────────────── */
+.veh-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.veh-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 6px 10px;
+  background: #fff;
+  border: 1px solid #ECECEC;
+  border-radius: 14px;
+  font: inherit;
+  color: #1F1F1F;
+  cursor: pointer;
+  transition: transform 0.05s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+}
+.veh-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+.veh-card:active { transform: scale(0.98); }
+.veh-card.selected {
+  border: 2px solid #FFC244;
+  background: #FFFBEF;
+  padding: 11px 5px 9px; /* compensate thicker border */
+}
+.veh-emoji { font-size: 24px; line-height: 1; }
+.veh-name  { font-weight: 700; font-size: 13px; }
+.veh-eta   { font-size: 11px; color: #6B6B6B; font-weight: 600; }
+.veh-co2 {
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 /* ── Cart totals ────────────────────────────────────────────────────────── */
 .totals {
   background: #FAFAFA;
