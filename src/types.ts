@@ -65,8 +65,9 @@ export interface BandResult {
 }
 
 export interface SwapSuggestion {
+  fromItemId: string;
   fromName: string;
-  toName: string;
+  toItem: MenuItem;     // the real replacement product, shown + added on swap
   savingKg: number;
   tip: string;
 }

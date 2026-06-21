@@ -42,6 +42,13 @@ export default function CartScreen() {
     pushToast(v.emoji, `${v.label} delivery · ${v.tagline.toLowerCase()}`);
   };
 
+  const applySwap = () => {
+    if (!swap) return;
+    removeFromCart(swap.fromItemId);   // drop one of the higher-impact item
+    addToCart(swap.toItem.itemId);     // add the greener replacement
+    pushToast('🌱', `Swapped to ${swap.toItem.itemName} · −${swap.savingKg} kg CO₂e`);
+  };
+
   return (
     <>
       <Header title="Your cart" left="←" onLeft={() => goTo('restaurant')} />
@@ -76,10 +83,26 @@ export default function CartScreen() {
         })}
 
         {swap && awarenessMode !== 'Off' && (
-          <div className="nudge">
+          <div className="nudge swap-nudge">
             <div className="label">💡 Eco tip — totally optional</div>
-            <b>Try {swap.toName}</b> instead of {swap.fromName} and save about{' '}
-            <b>{swap.savingKg} kg CO₂e</b>. {swap.tip}
+            <div className="swap-text">
+              Swap <b>{swap.fromName}</b> and save{' '}
+              <b>{swap.savingKg} kg CO₂e</b>. {swap.tip}
+            </div>
+            <div className="swap-product">
+              <div className="emoji">{swap.toItem.emoji}</div>
+              <div className="info">
+                <div className="name">{swap.toItem.itemName}</div>
+                <div className="desc">{swap.toItem.description}</div>
+                <div className="meta">
+                  <EcoBadge co2eKg={swap.toItem.co2eKg} mode={awarenessMode} />
+                  <span className="price">€{swap.toItem.priceEur.toFixed(2)}</span>
+                </div>
+              </div>
+              <button className="swap-btn" onClick={applySwap}>
+                Swap ↺
+              </button>
+            </div>
           </div>
         )}
 
@@ -87,6 +110,7 @@ export default function CartScreen() {
         <div className="veh-grid">
           {DELIVERY_VEHICLES.map((v) => {
             const band = impactBand(v.co2eKg);
+            const ecoLabel = v.co2eKg === 0 ? 'Zero' : band.label;
             const selected = v.id === deliveryVehicleId;
             return (
               <button
@@ -102,7 +126,7 @@ export default function CartScreen() {
                   {awarenessMode === 'Detailed'
                     ? `${band.leaf} ${v.co2eKg.toFixed(2)} kg`
                     : awarenessMode === 'Light'
-                      ? `${band.leaf} ${band.label}`
+                      ? `${band.leaf} ${ecoLabel}`
                       : band.leaf}
                 </span>
               </button>

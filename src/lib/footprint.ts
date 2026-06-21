@@ -1,27 +1,19 @@
 import type {
-  AwarenessMode, BandResult, DeliveryVehicleId, ItemCategory, MenuItem,
+  AwarenessMode, BandResult, DeliveryVehicleId, MenuItem,
   OrderBreakdown, OrderLine, SwapSuggestion,
 } from '../types';
 import { MENU_BY_ID } from '../data/menu';
 import { DEFAULT_VEHICLE_ID, DELIVERY_BY_ID } from '../data/delivery';
 
-interface Swap {
-  swapTo: string;
-  savingPct: number;
-  tip: string;
-}
-
-const ITEM_SWAPS: Partial<Record<ItemCategory, Swap>> = {
-  Beef:    { swapTo: 'Veggie Garden Burger', savingPct: 0.84,
-             tip: 'A veggie patty here saves ~84% of this item’s footprint.' },
-  Chicken: { swapTo: 'Veggie alternative',   savingPct: 0.55,
-             tip: 'Swapping chicken for a plant option saves ~55%.' },
-  Pizza:   { swapTo: 'Margherita / Vegana',  savingPct: 0.55,
-             tip: 'A veggie pizza saves ~55% vs meat-topped.' },
-  Sushi:   { swapTo: 'Veggie Roll',          savingPct: 0.65,
-             tip: 'Veggie rolls have ~65% lower footprint than fish.' },
-  Grocery: { swapTo: 'Plant-based',          savingPct: 0.50,
-             tip: 'Plant-based dairy alternatives roughly halve footprint.' },
+// Concrete, same-restaurant swaps: cart item id -> greener replacement id.
+// Savings are computed from the two products' real footprints, not estimates.
+const ITEM_SWAPS: Record<string, string> = {
+  b1: 'b2',  // Classic Beef Burger  -> Veggie Garden Burger
+  b3: 'b2',  // Crispy Chicken Wrap  -> Veggie Garden Burger
+  p2: 'p3',  // Pepperoni            -> Vegana
+  s1: 's2',  // Salmon Nigiri        -> Veggie Roll
+  s3: 's2',  // Tuna Sashimi         -> Veggie Roll
+  g3: 'g5',  // Aged Cheddar         -> Tofu Block
 };
 
 export function getItem(itemId: string): MenuItem | undefined {
@@ -69,15 +61,20 @@ export function impactBand(co2eKg: number): BandResult {
 }
 
 export function bestSwap(items: OrderLine[]): SwapSuggestion | null {
-  const candidates = items.filter((r) => ITEM_SWAPS[r.category]);
+  const candidates = items.filter((r) => ITEM_SWAPS[r.itemId]);
   if (!candidates.length) return null;
   const target = candidates.reduce((a, b) => (a.co2eKg >= b.co2eKg ? a : b));
-  const swap = ITEM_SWAPS[target.category]!;
+  const toItem = MENU_BY_ID[ITEM_SWAPS[target.itemId]];
+  if (!toItem) return null;
+  const savingKg = round2(target.co2eKg - toItem.co2eKg);
+  if (savingKg <= 0) return null;
+  const pct = Math.round((savingKg / target.co2eKg) * 100);
   return {
-    fromName: target.name,
-    toName:   swap.swapTo,
-    savingKg: round2(target.co2eKg * swap.savingPct),
-    tip:      swap.tip,
+    fromItemId: target.itemId,
+    fromName:   target.name,
+    toItem,
+    savingKg,
+    tip: `A ${toItem.itemName} cuts about ${pct}% of this item’s footprint.`,
   };
 }
 

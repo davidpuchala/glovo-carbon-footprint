@@ -298,6 +298,43 @@ button:disabled { cursor: default; }
   display: block; margin-bottom: 4px;
 }
 
+/* ── One-tap swap suggestion ────────────────────────────────────────────── */
+.swap-nudge .swap-text { margin-bottom: 10px; }
+.swap-product {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff;
+  border: 1px solid #A7F3D0;
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+.swap-product .emoji {
+  font-size: 22px;
+  width: 44px; height: 44px;
+  background: #ECFDF5;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.swap-product .info { flex: 1; min-width: 0; }
+.swap-product .name { font-weight: 700; font-size: 14px; color: #1F1F1F; }
+.swap-product .desc {
+  font-size: 11px; color: #6B6B6B; margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.swap-product .meta {
+  display: flex; align-items: center; gap: 8px; margin-top: 5px;
+}
+.swap-product .price { font-weight: 700; font-size: 13px; color: #1F1F1F; }
+.swap-btn {
+  flex-shrink: 0;
+  background: #047857; color: #fff;
+  border: none; border-radius: 999px;
+  padding: 9px 14px;
+  font-weight: 700; font-size: 13px;
+  white-space: nowrap;
+}
+.swap-btn:active { transform: scale(0.96); }
+
 /* ── Settings rows ──────────────────────────────────────────────────────── */
 .settings-row {
   display: flex; align-items: center;
