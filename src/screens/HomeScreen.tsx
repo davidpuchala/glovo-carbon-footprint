@@ -3,7 +3,7 @@ import BottomNav from '../components/BottomNav';
 import { useApp } from '../state/AppContext';
 
 export default function HomeScreen() {
-  const { setActiveRestaurant, goTo } = useApp();
+  const { setActiveRestaurant, goTo, awarenessMode } = useApp();
   const open = (name: string) => {
     setActiveRestaurant(name);
     goTo('restaurant');
@@ -27,7 +27,9 @@ export default function HomeScreen() {
               <div className="name">Burger Lab</div>
               <div className="desc">American · 25-35 min · ⭐ 4.7</div>
               <div className="meta">
-                <span className="eco-badge eco-med">🌿 Mixed footprint</span>
+                {awarenessMode !== 'Off' && (
+                  <span className="eco-badge eco-med">🌿 Mixed footprint</span>
+                )}
                 <span className="price">From €5.50</span>
               </div>
             </div>
@@ -42,7 +44,9 @@ export default function HomeScreen() {
               <div className="name">Napoli Pizza</div>
               <div className="desc">Italian · 20-30 min · ⭐ 4.6</div>
               <div className="meta">
-                <span className="eco-badge eco-low">🌱 Low footprint</span>
+                {awarenessMode !== 'Off' && (
+                  <span className="eco-badge eco-low">🌱 Low footprint</span>
+                )}
                 <span className="price">From €10.50</span>
               </div>
             </div>
@@ -57,7 +61,9 @@ export default function HomeScreen() {
               <div className="name">Sushi Daily</div>
               <div className="desc">Japanese · 30-40 min · ⭐ 4.5</div>
               <div className="meta">
-                <span className="eco-badge eco-med">🌿 Mixed</span>
+                {awarenessMode !== 'Off' && (
+                  <span className="eco-badge eco-med">🌿 Mixed</span>
+                )}
                 <span className="price">From €9.50</span>
               </div>
             </div>
@@ -72,7 +78,9 @@ export default function HomeScreen() {
               <div className="name">Glovo Market</div>
               <div className="desc">Groceries · 15-20 min</div>
               <div className="meta">
-                <span className="eco-badge eco-med">🌿 Mixed</span>
+                {awarenessMode !== 'Off' && (
+                  <span className="eco-badge eco-med">🌿 Mixed</span>
+                )}
                 <span className="price">Wide range</span>
               </div>
             </div>
