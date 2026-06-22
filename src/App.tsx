@@ -7,7 +7,7 @@ export default function App() {
       <div className="wallpaper">
         <Phone />
         <p className="footer-note">
-          Mock-up · Glovo Carbon Footprint prototype · React port
+          Mock-up · EcoGlovo prototype · React port
         </p>
       </div>
     </AppProvider>
